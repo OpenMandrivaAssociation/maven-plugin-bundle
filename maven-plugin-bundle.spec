@@ -1,6 +1,6 @@
 Name:           maven-plugin-bundle
 Version:        2.0.0
-Release:        7
+Release:        9
 Summary:        Maven Bundle Plugin
 
 Group:          Development/Java
