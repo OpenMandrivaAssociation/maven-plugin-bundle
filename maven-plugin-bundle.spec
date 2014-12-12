@@ -3,58 +3,29 @@
 
 Name:           maven-plugin-bundle
 Version:        2.3.7
-Release:        10.1%{?dist}
+Release:        14%{?dist}
+Group:		System/Libraries
 Summary:        Maven Bundle Plugin
-
-
 License:        ASL 2.0
 URL:            http://felix.apache.org
+BuildArch:      noarch
+
 Source0:        http://archive.apache.org/dist/felix/%{site_name}-%{version}-source-release.tar.gz
 
 Patch0:         %{site_name}-dependency.patch
 Patch1:         %{site_name}-unreported-exception.patch
 
-BuildRequires: aqute-bndlib >= 1.50.0
-BuildRequires: plexus-utils >= 1.4.5
-BuildRequires: felix-osgi-obr
-BuildRequires: kxml
-BuildRequires: maven-local
-BuildRequires: maven-shared-dependency-tree >= 1.1-3
-BuildRequires: maven-wagon >= 1.0-0.2.b2
-BuildRequires: maven-compiler-plugin
-BuildRequires: maven-install-plugin
-BuildRequires: maven-jar-plugin
-BuildRequires: maven-javadoc-plugin
-BuildRequires: maven-plugin-plugin
-BuildRequires: maven-resources-plugin
-BuildRequires: maven-surefire-plugin >= 2.3
-BuildRequires: maven-surefire-provider-junit4 >= 2.3
-BuildRequires: maven-doxia-sitetools
-BuildRequires: maven-shared-osgi
-BuildRequires: maven-archiver
-BuildRequires: maven-plugin-testing-harness
-BuildRequires: mockito
-BuildRequires: plexus-archiver
-BuildRequires: plexus-containers-container-default
-BuildRequires: felix-parent
-BuildRequires: felix-bundlerepository
-
-Requires: aqute-bndlib >= 1.50.0
-Requires: plexus-utils >= 1.4.5
-Requires: felix-osgi-obr
-Requires: kxml
-Requires: maven
-Requires: maven-archiver
-Requires: maven-shared-dependency-tree
-Requires: maven-wagon
-Requires: maven-shared-osgi
-Requires: plexus-archiver
-Requires: plexus-containers-container-default
-Requires: felix-parent
-Requires: felix-bundlerepository
-
-BuildArch: noarch
-
+BuildRequires:  maven-local
+BuildRequires:  mvn(biz.aQute:bndlib)
+BuildRequires:  mvn(net.sf.kxml:kxml2)
+BuildRequires:  mvn(org.apache.felix:felix-parent:pom:)
+BuildRequires:  mvn(org.apache.felix:org.apache.felix.bundlerepository)
+BuildRequires:  mvn(org.apache.maven:maven-archiver)
+BuildRequires:  mvn(org.apache.maven:maven-core)
+BuildRequires:  mvn(org.apache.maven.shared:maven-dependency-tree)
+BuildRequires:  mvn(org.apache.maven.shared:maven-plugin-testing-harness)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-utils)
+BuildRequires:  mvn(org.mockito:mockito-all)
 
 %description
 Provides a maven plugin that supports creating an OSGi bundle
@@ -62,9 +33,7 @@ from the contents of the compilation classpath along with its
 resources and dependencies. Plus a zillion other features.
 
 %package javadoc
-
 Summary:        Javadoc for %{name}
-Requires:       jpackage-utils
 
 %description javadoc
 API documentation for %{name}.
@@ -79,35 +48,30 @@ API documentation for %{name}.
 #rm -rf src/main/java/org/apache/maven
 
 %build
-mvn-rpmbuild install javadoc:aggregate
+%mvn_build
 
 %install
-# jars
-install -d -m 0755 %{buildroot}%{_javadir}
-install -m 644 target/maven-bundle-plugin-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
+%mvn_install
 
-# poms
-install -d -m 755 %{buildroot}%{_mavenpomdir}
-install -pm 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-
-# javadoc
-install -d -m 0755 %{buildroot}%{_javadocdir}/%{name}
-cp -pr target/site/api*/* %{buildroot}%{_javadocdir}/%{name}/
-rm -rf target/site/api*
-
-%add_maven_depmap JPP-%{name}.pom %{name}.jar
-
-%files
+%files -f .mfiles
 %doc LICENSE NOTICE DEPENDENCIES
-%{_javadir}/%{name}.jar
-%{_mavenpomdir}/JPP-%{name}.pom
-%{_mavendepmapfragdir}/%{name}
 
-%files javadoc
-%doc LICENSE
-%{_javadocdir}/%{name}
+%files javadoc -f .mfiles-javadoc
+%doc LICENSE NOTICE
 
 %changelog
+* Mon Aug  4 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.7-14
+- Add build-requires on mockito
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.7-13
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Wed May 21 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.7-12
+- Update to current packaging guidelines
+
+* Thu Feb 20 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.7-11
+- Remove unneeded R and BR: maven-wagon
+
 * Fri Jul 26 2013 Tomas Radej <tradej@redhat.com> - 2.3.7-10
 - Fixed release number
 
@@ -186,3 +150,4 @@ rm -rf target/site/api*
 
 * Thu Sep 3 2009 Alexander Kurtakov <akurtako@redhat.com> 2.0.0-1
 - Initial import.
+
