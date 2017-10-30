@@ -2,9 +2,8 @@
 %global site_name maven-bundle-plugin
 
 Name:           maven-plugin-bundle
-Version:        2.3.7
-Release:        14%{?dist}
-Group:		System/Libraries
+Version:        2.5.4
+Release:        2.1
 Summary:        Maven Bundle Plugin
 License:        ASL 2.0
 URL:            http://felix.apache.org
@@ -12,20 +11,24 @@ BuildArch:      noarch
 
 Source0:        http://archive.apache.org/dist/felix/%{site_name}-%{version}-source-release.tar.gz
 
-Patch0:         %{site_name}-dependency.patch
-Patch1:         %{site_name}-unreported-exception.patch
-
 BuildRequires:  maven-local
-BuildRequires:  mvn(biz.aQute:bndlib)
+BuildRequires:  mvn(biz.aQute.bnd:biz.aQute.bndlib)
 BuildRequires:  mvn(net.sf.kxml:kxml2)
 BuildRequires:  mvn(org.apache.felix:felix-parent:pom:)
 BuildRequires:  mvn(org.apache.felix:org.apache.felix.bundlerepository)
+BuildRequires:  mvn(org.apache.felix:org.apache.felix.framework)
+BuildRequires:  mvn(org.apache.felix:org.apache.felix.utils)
+BuildRequires:  mvn(org.apache.maven.doxia:doxia-sink-api)
+BuildRequires:  mvn(org.apache.maven.doxia:doxia-site-renderer)
 BuildRequires:  mvn(org.apache.maven:maven-archiver)
 BuildRequires:  mvn(org.apache.maven:maven-core)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-plugin-plugin)
+BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
+BuildRequires:  mvn(org.apache.maven.reporting:maven-reporting-impl)
 BuildRequires:  mvn(org.apache.maven.shared:maven-dependency-tree)
-BuildRequires:  mvn(org.apache.maven.shared:maven-plugin-testing-harness)
 BuildRequires:  mvn(org.codehaus.plexus:plexus-utils)
-BuildRequires:  mvn(org.mockito:mockito-all)
+BuildRequires:  mvn(org.osgi:org.osgi.core)
+BuildRequires:  mvn(org.sonatype.plexus:plexus-build-api)
 
 %description
 Provides a maven plugin that supports creating an OSGi bundle
@@ -41,14 +44,18 @@ API documentation for %{name}.
 %prep
 %setup -q -n %{site_name}-%{version}
 
-%patch0 -p1
-%patch1 -p1
+find -name '*.jar' -delete
 
-# remove bundled stuff
-#rm -rf src/main/java/org/apache/maven
+# There is forked version of maven-osgi in
+# src/{main,test}/java/org/apache/maven
+
+%pom_add_dep net.sf.kxml:kxml2
+%pom_add_dep org.apache.felix:org.apache.felix.framework
+%pom_add_dep org.apache.maven.reporting:maven-reporting-impl
 
 %build
-%mvn_build
+# Tests depend on bundled JARs
+%mvn_build -f
 
 %install
 %mvn_install
@@ -60,6 +67,15 @@ API documentation for %{name}.
 %doc LICENSE NOTICE
 
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.5.4-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Wed Jul 08 2015 Michael Simacek <msimacek@redhat.com> - 2.5.4-1
+- Update to upstream version 2.5.4
+
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.3.7-15
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Mon Aug  4 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.3.7-14
 - Add build-requires on mockito
 
@@ -150,4 +166,3 @@ API documentation for %{name}.
 
 * Thu Sep 3 2009 Alexander Kurtakov <akurtako@redhat.com> 2.0.0-1
 - Initial import.
-
