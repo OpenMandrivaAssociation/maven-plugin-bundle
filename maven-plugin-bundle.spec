@@ -3,7 +3,7 @@
 
 Name:           maven-plugin-bundle
 Version:        2.5.4
-Release:        2.1
+Release:        2.2
 Summary:        Maven Bundle Plugin
 License:        ASL 2.0
 URL:            http://felix.apache.org
