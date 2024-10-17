@@ -6,7 +6,7 @@ Version:        2.5.4
 Release:        2.2
 Summary:        Maven Bundle Plugin
 License:        ASL 2.0
-URL:            http://felix.apache.org
+URL:            https://felix.apache.org
 BuildArch:      noarch
 
 Source0:        http://archive.apache.org/dist/felix/%{site_name}-%{version}-source-release.tar.gz
